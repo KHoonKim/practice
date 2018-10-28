@@ -1,7 +1,6 @@
 import React from 'react';
-import { Animated, StyleSheet, Text, View, Button, StatusBar,Dimensions, Platform, ImageBackground, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { ScrollView, Animated, StyleSheet, Text, View, Button, StatusBar,Dimensions, Platform, ImageBackground, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
-import { ScrollView } from './node_modules/react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Deal from './deal'
 
@@ -56,21 +55,18 @@ const deals = {
     createdAt : '2018-10-15'
   }
 }
-const dt = new Date();
-
-_dateDiff = (date1, date2) => {
-  var diffDate_1 = date1 instanceof Date ? date1 : new Date(date1);
-  var diffDate_2 = date2 instanceof Date ? date2 : new Date(date2);
-
-  diffDate_1 = new Date (diffDate_1.getFullYear(), diffDate_1.getMonth()+1, diffDate_1.getDate())
-  diffDate_2 = new Date (diffDate_2.getFullYear(), diffDate_2.getMonth()+1, diffDate_2.getDate())
-
-  var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime())
-  diff = Math.ceil(diff / (1000 * 3600 * 24))
-
-  return diff;
-}
-
+/// Deal modal
+const FIXED_BAR_WIDTH = width
+const BAR_SPACE = 0
+const images = [
+  'https://timedotcom.files.wordpress.com/2015/01/back-to-the-future-nikes.jpg',
+  'https://pbs.twimg.com/media/DWFpKVhU8AU158o.jpg',
+  'http://bit.ly/2JbYwPn',
+  'https://sneakernews.com/wp-content/uploads/2017/01/Adidas_EQT-support-ADV_Black_Turbo_Red-1.jpg',
+  'https://i.pinimg.com/originals/55/e7/8b/55e78bdd7d2ea2d66e3dad3fe753b812.jpg',
+  'http://bit.ly/2JcMGVe',
+  
+]
 
 
 
@@ -94,14 +90,14 @@ class HomeScreen extends React.Component {
               {
                 Object.values(deals)                  
                 .map( dealObject => {
-                  if(_dateDiff(dealObject.createdAt, Date.now()) > 0){
+                  
                     return <Deal 
                       key={dealObject.id} 
                       title={dealObject.title} 
                       imageUri={dealObject.imageUri} 
                       navi={this.props.navigation}
                     />
-                  }
+                 
                 })
               }
             </View>
@@ -128,19 +124,6 @@ class SettingsScreen extends React.Component {
   }
 }
 
-
-///
-const FIXED_BAR_WIDTH = 280
-const BAR_SPACE = 10
-const images = [
-  'https://timedotcom.files.wordpress.com/2015/01/back-to-the-future-nikes.jpg',
-  'https://pbs.twimg.com/media/DWFpKVhU8AU158o.jpg',
-  'http://bit.ly/2JbYwPn',
-  'https://sneakernews.com/wp-content/uploads/2017/01/Adidas_EQT-support-ADV_Black_Turbo_Red-1.jpg',
-  'https://i.pinimg.com/originals/55/e7/8b/55e78bdd7d2ea2d66e3dad3fe753b812.jpg',
-  'http://bit.ly/2JcMGVe'
-]
-
 class ModalScreen extends React.Component {
  
   numItems = images.length
@@ -152,18 +135,18 @@ class ModalScreen extends React.Component {
     const title = navigation.getParam('title', 'NO-title');
     const imageUri = navigation.getParam('imageUri', 'NO-title');
     
+
     let imageArray = []
     let barArray = []
     
     images.forEach((image, i) => {
-      console.log(image, i)
+
       const thisImage = (
         <Image
           key={`image${i}`}
           source={{uri: image}}
           style={{ width: width }}
         />
-        // <ImageBackground key={`image${i}`} source={{uri : imageUri}} style={{width: width, height: '100%' }} />
       )
       imageArray.push(thisImage)
 
@@ -173,8 +156,6 @@ class ModalScreen extends React.Component {
         outputRange: [-this.itemWidth, this.itemWidth],
         extrapolate: 'clamp',
       })
-      
-      
 
       const thisBar = (
         
@@ -205,136 +186,41 @@ class ModalScreen extends React.Component {
       )
       
       barArray.push(thisBar)
-      console.log('barArray : ' + barArray[i]);
     })
 
 
     return (
       
       <View
-        style={{
-          backgroundColor : 'yellow',
-          flex : 1,
-          zIndex : 0,
-          justifyContent : 'center',
-          alignContent : 'center'
-        }}
+        style={styles.modalMainContainer}
       >
         
-        <ScrollView horizontal //scrolling left to right instead of top to bottom
-          showsHorizontalScrollIndicator={true} //hides native scrollbar
-          scrollEventThrottle={10} //how often we update the position of the indicator bar
-          pagingEnabled //scrolls from one image to the next, instead of allowing any value inbetween
-          onScroll={
-            Animated.event(
-              [{ nativeEvent: { contentOffset: { x: this.animVal } } }]
-            )
-          }
+        /// Deal Scrollview
+        <ScrollView horizontal showsHorizontalScrollIndicator={true} scrollEventThrottle={10} pagingEnabled contentOffset = {{ x: 100}}
+          onScroll={ Animated.event( [{ nativeEvent: { contentOffset: { x: this.animVal } } }])}
         >
-
-        {imageArray}
-          {/* <View
-            style={{
-              backgroundColor : 'green',
-              flex : 1,
-              width : width,
-              zIndex : 0
-            }}
-          > 
-            <ScrollView
-              scrollEventThrottle={10}
-            >
-              <View
-                style={{
-                  flex : 1,
-                  height : height,
-                  width : width,
-                  zIndex : 0
-                }}
-              >
-                
-                
-              </View>
-              <View
-                style={{
-                  backgroundColor : 'gray',
-                  flex : 1,
-                  height : height,
-                  width : width,
-                  zIndex : 0
-                }}
-              ></View>
-            </ScrollView>
-          </View>
-          
-          <View
-            style={{
-              backgroundColor : 'green',
-              flex : 1,
-              width : width,
-              zIndex : 0
-            }}
-          > 
-            <ScrollView>
-              <View
-                style={{
-                  backgroundColor : 'red',
-                  flex : 1,
-                  height : height,
-                  width : width,
-                  zIndex : 0
-                }}
-              ></View>
-              <View
-                style={{
-                  backgroundColor : 'gray',
-                  flex : 1,
-                  height : height,
-                  width : width,
-                  zIndex : 0
-                }}
-              ></View>
-            </ScrollView>
-          </View> */}
-
+          {imageArray}
         </ScrollView>
 
+        <View style={styles.scrollBarContainer}>
+          {barArray}
+        </View>
 
-        
-        
-        <View
-          style={{
-            position : 'absolute',
-            // backgroundColor : 'black',
-            height : 100,
-            width : width,
-            zIndex : 1,
-            top : 0,
-            // opacity : .3
-          }}
-        >
+        <View style={styles.marginTopContainer}>
+          /// 상단 X 버튼
           <SafeAreaView style={{flex: 1,}}>
-            
-            <View
-              style={styles.barContainer}
-            >
-              {barArray}
-            </View>
-
-
             <View style={{flexDirection: 'row',}}>
               <View style={{flex : 1 , justifyContent : 'center', margin : 10, alignItems : 'center'}} />
-              <View style={{flex : 4 ,height : 50, justifyContent : 'center', margin : 10, alignItems : 'center'}}>
-
-              </View>
+              <View style={{flex : 4 ,height : 50, justifyContent : 'center', margin : 10, alignItems : 'center'}}></View>
               <TouchableOpacity style={{flex : 1, height : 50, width : 50, justifyContent : 'center', margin : 10, alignItems : 'center'}}>
                 <Ionicons name="ios-close" size={50} color="white" />
               </TouchableOpacity>
             </View>
-            
           </SafeAreaView>
-          <View style={{ top : 30, alignItems : 'center' }}>>
-            
+
+
+          /// 남은 시간
+          <View style={{ top : 100, alignItems : 'center' }}>>  
             <Text style={{color : 'white', fontSize : 15 }}>
               남은 시간
             </Text>
@@ -342,21 +228,12 @@ class ModalScreen extends React.Component {
               40:33:10
             </Text>
           </View>
+        </View>
 
+        /// 하단 버튼 영역
+        <View style={styles.modalButtonContainer}>
         </View>
-        <View
-          style={{
-            position : 'absolute',
-            backgroundColor : 'black',
-            height : 100,
-            width : width,
-            zIndex : 1,
-            bottom : 0,
-            opacity : .3
-          }}
-        >
-        </View>
-        
+
         
       </View>
     );
@@ -420,12 +297,34 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  barContainer: {
+  modalMainContainer : {
+    backgroundColor : 'yellow',
+    flex : 1,
+    justifyContent : 'center',
+    alignContent : 'center'
+  },
+  modalButtonContainer : {
+    position : 'absolute',
+    backgroundColor : 'black',
+    height : 100,
+    width : width,
+    zIndex : 1,
+    bottom : 0,
+    opacity : .3
+  },
+  marginTopContainer: {
+    position : 'absolute',
+    height : 100,
+    width : width,
+    zIndex : 1,
+    top : 0,
+  },
+  scrollBarContainer: {
     position: 'absolute',
-    zIndex: 1,
-    top: 40,
+    top: 100,
     flexDirection: 'row',
-    backgroundColor : 'red'
+    backgroundColor : 'red',
+    
   },
   track: {
     backgroundColor: 'white',
@@ -433,7 +332,7 @@ const styles = StyleSheet.create({
     height: 2,
   },
   bar: {
-    backgroundColor: 'yellow',
+    backgroundColor: 'red',
     height: 2,
     position: 'absolute',
     left: 0,
@@ -452,7 +351,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 30,
     fontWeight: "800",
-    // marginBottom: 30,
   },
   subTitle : {
     color: "gray",
